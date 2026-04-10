@@ -1,8 +1,8 @@
 #ifndef SSE_SSE_SSE_H_
 #define SSE_SSE_SSE_H_
 
-#include "sse_event.h"
 #include "sse_conn.h"
+#include "sse_event.h"
 #include "sse_stream.h"
 
 typedef bool (*SSEEventCallback)(SSEEvent* event, void* user_data);

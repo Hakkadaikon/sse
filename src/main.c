@@ -36,10 +36,9 @@ int main(void)
   SSEServerConfig config = {
     .port              = 8080,
     .backlog           = 128,
-    .event_interval_ms = 2000
-  };
+    .event_interval_ms = 2000};
 
-  SSEServer      server;
+  SSEServer       server;
   static uint32_t counter = 0;
 
   sse_server_init(&server, &config);
