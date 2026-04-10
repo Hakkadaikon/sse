@@ -1,0 +1,12 @@
+#ifndef SSE_INTERNAL_CLOSE_H_
+#define SSE_INTERNAL_CLOSE_H_
+
+#include "../util/types.h"
+#include "linux/x86_64/close.h"
+
+static inline int32_t internal_close(int32_t fd)
+{
+  return linux_x8664_close(fd);
+}
+
+#endif
