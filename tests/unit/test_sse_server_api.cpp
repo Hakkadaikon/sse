@@ -122,11 +122,14 @@ TEST_F(SSEServerAPITest, RunBroadcastsEventsToClient) {
   });
 
   // Give server time to start
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
   // Connect a client
   int client_fd = socket(AF_INET, SOCK_STREAM, 0);
   ASSERT_GE(client_fd, 0);
+
+  struct timeval tv = {2, 0};
+  setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 
   struct sockaddr_in addr{};
   addr.sin_family = AF_INET;
@@ -140,17 +143,20 @@ TEST_F(SSEServerAPITest, RunBroadcastsEventsToClient) {
   const char* request = "GET /events HTTP/1.1\r\nAccept: text/event-stream\r\n\r\n";
   send(client_fd, request, strlen(request), 0);
 
-  // Wait for events
-  std::this_thread::sleep_for(std::chrono::milliseconds(300));
+  // Read response (headers + events)
+  std::string response;
+  char buf[4096];
+  for (int attempt = 0; attempt < 5; attempt++) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    ssize_t n = recv(client_fd, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+    if (n > 0) {
+      buf[n] = '\0';
+      response += buf;
+    }
+    if (response.find("data:hello") != std::string::npos) break;
+  }
 
-  // Read response
-  char buf[4096] = {};
-  struct timeval tv = {1, 0};
-  setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
-  ssize_t n = recv(client_fd, buf, sizeof(buf) - 1, 0);
-
-  EXPECT_GT(n, 0);
-  std::string response(buf, n);
+  EXPECT_FALSE(response.empty());
   EXPECT_NE(response.find("text/event-stream"), std::string::npos);
   EXPECT_NE(response.find("data:hello"), std::string::npos);
 
