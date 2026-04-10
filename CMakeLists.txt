@@ -12,8 +12,8 @@ file(GLOB_RECURSE ASM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.S")
 set(
   DEBUG_COMPILE_OPTIONS
   "-O0"
-  "-static-libasan"
   "-fno-builtin"
+  "-fno-stack-protector"
   "-std=c2x"
   "-g"
 )
@@ -24,6 +24,7 @@ set(
   "-ffast-math"
   "-fno-math-errno"
   "-fno-builtin"
+  "-fno-stack-protector"
   "-std=c2x"
   "-falign-functions"
 )
@@ -63,7 +64,7 @@ target_compile_options(
 
 # Add link options (applied to both Debug and Release configurations)
 #target_link_options(sse PRIVATE -flto)
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+target_link_options(sse PRIVATE -static -no-pie)
 set(BUILD_SHARED_LIBS OFF)
 
 # Tests

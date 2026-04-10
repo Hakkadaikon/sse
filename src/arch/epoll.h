@@ -1,5 +1,5 @@
-#ifndef SSE_INTERNAL_SEND_H_
-#define SSE_INTERNAL_SEND_H_
+#ifndef SSE_INTERNAL_EPOLL_H_
+#define SSE_INTERNAL_EPOLL_H_
 
 #include "../util/types.h"
 #include "./linux/epoll.h"

@@ -29,7 +29,7 @@ static inline int32_t linux_x8664_sigaction(const int32_t signum, struct sigacti
 
 static inline int32_t linux_x8664_sigemptyset(sigset_t* set)
 {
-  websocket_memset_s(set, sizeof(sigset_t), 0x00, sizeof(sigset_t));
+  _memset_s(set, sizeof(sigset_t), 0x00, sizeof(sigset_t));
   return 1;
 }
 

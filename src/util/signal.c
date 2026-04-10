@@ -12,7 +12,7 @@ bool        signal_init();
 bool signal_init()
 {
   struct sigaction sa;
-  websocket_memset_s(&sa, sizeof(sa), 0x00, sizeof(sa));
+  _memset_s(&sa, sizeof(sa), 0x00, sizeof(sa));
   sa.sa_handler = signal_handler;
   internal_sigemptyset(&sa.sa_mask);
 
