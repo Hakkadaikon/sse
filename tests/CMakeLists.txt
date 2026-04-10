@@ -53,3 +53,26 @@ target_compile_options(integration_tests PRIVATE -Wno-register)
 set_target_properties(integration_tests PROPERTIES LINK_FLAGS "-no-pie")
 
 gtest_discover_tests(integration_tests)
+
+# SSE server API tests
+set(SSE_API_SOURCES
+  ${CMAKE_SOURCE_DIR}/src/sse/sse.c
+  ${CMAKE_SOURCE_DIR}/src/sse/sse_event.c
+  ${CMAKE_SOURCE_DIR}/src/sse/sse_conn.c
+  ${CMAKE_SOURCE_DIR}/src/sse/sse_stream.c
+  ${CMAKE_SOURCE_DIR}/src/http/http.c
+  ${CMAKE_SOURCE_DIR}/src/util/log.c
+  ${CMAKE_SOURCE_DIR}/src/util/signal.c
+)
+
+add_executable(api_tests
+  unit/test_sse_server_api.cpp
+  ${SSE_API_SOURCES}
+)
+target_link_libraries(api_tests PRIVATE gtest_main asm)
+target_include_directories(api_tests PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_compile_definitions(api_tests PRIVATE LOG_LEVEL_ERROR)
+target_compile_options(api_tests PRIVATE -Wno-register)
+set_target_properties(api_tests PROPERTIES LINK_FLAGS "-no-pie")
+
+gtest_discover_tests(api_tests)
