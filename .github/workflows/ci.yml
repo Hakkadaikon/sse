@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    name: Format check & auto-fix
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+
+      - name: Run clang-format
+        run: clang-format -i $(find ./src -name '*.[ch]')
+
+      - name: Check for changes
+        id: fmt-check
+        run: |
+          if [ -n "$(git diff --name-only)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push formatted code
+        if: steps.fmt-check.outputs.changed == 'true' && github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "style: auto-format with clang-format"
+          git push
+
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-24.04
+    needs: format
+    env:
+      CC: gcc-14
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install GCC 14
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-14 g++-14
+
+      - name: Configure
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=gcc-14 \
+            -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_C_STANDARD=23 \
+            -DCMAKE_CXX_STANDARD=23
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Run unit tests
+        run: ./build/tests/unit_tests --gtest_output=xml:build/unit_test_results.xml
+
+      - name: Run integration tests
+        run: ./build/tests/integration_tests --gtest_output=xml:build/integration_test_results.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/*_test_results.xml
+
+  libc-independence:
+    name: Verify libc independence
+    runs-on: ubuntu-24.04
+    needs: build-and-test
+    env:
+      CC: gcc-14
+      CXX: g++-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install GCC 14
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-14 g++-14
+
+      - name: Build release binary
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=gcc-14 \
+            -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_C_STANDARD=23 \
+            -DCMAKE_CXX_STANDARD=23
+          cmake --build build --target sse
+
+      - name: Check dynamic dependencies (ldd)
+        run: |
+          echo "=== ldd output ==="
+          ldd build/sse || true
+
+      - name: Check dynamic symbols (readelf)
+        run: |
+          echo "=== readelf --dyn-syms ==="
+          readelf --dyn-syms -W build/sse || true
+
+      - name: Verify statically linked
+        run: |
+          if file build/sse | grep -q "dynamically linked"; then
+            echo "ERROR: binary is dynamically linked"
+            exit 1
+          fi
+          echo "OK: binary is statically linked"

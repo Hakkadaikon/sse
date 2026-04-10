@@ -9,12 +9,20 @@ endif()
 
 file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
 file(GLOB_RECURSE ASM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.S")
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 23)
+endif()
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 23)
+endif()
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(
   DEBUG_COMPILE_OPTIONS
   "-O0"
   "-fno-builtin"
   "-fno-stack-protector"
-  "-std=c2x"
   "-g"
 )
 set(
@@ -25,7 +33,6 @@ set(
   "-fno-math-errno"
   "-fno-builtin"
   "-fno-stack-protector"
-  "-std=c2x"
   "-falign-functions"
 )
 
