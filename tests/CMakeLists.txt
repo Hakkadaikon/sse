@@ -39,6 +39,7 @@ set(SSE_INTEGRATION_SOURCES
   ${CMAKE_SOURCE_DIR}/src/sse/sse_conn.c
   ${CMAKE_SOURCE_DIR}/src/sse/sse_stream.c
   ${CMAKE_SOURCE_DIR}/src/http/http.c
+  ${CMAKE_SOURCE_DIR}/src/util/log.c
 )
 
 add_executable(integration_tests

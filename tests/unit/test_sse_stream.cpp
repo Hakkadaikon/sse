@@ -17,7 +17,7 @@ protected:
   }
 };
 
-// 1. InitSetsDefaultValues - 初期化後のデフォルト値
+// 1. InitSetsDefaultValues - all fields set to defaults after init
 TEST_F(SSEStreamTest, InitSetsDefaultValues) {
   EXPECT_EQ(stream.connection_count, 0u);
   EXPECT_EQ(stream.queue_head, 0u);
@@ -28,7 +28,7 @@ TEST_F(SSEStreamTest, InitSetsDefaultValues) {
   }
 }
 
-// 2. AddConnection_ReturnsIndex - 接続追加でインデックス返却
+// 2. AddConnection_ReturnsIndex - returns slot index on success
 TEST_F(SSEStreamTest, AddConnection_ReturnsIndex) {
   const int32_t fd = 42;
 
@@ -38,7 +38,7 @@ TEST_F(SSEStreamTest, AddConnection_ReturnsIndex) {
   EXPECT_EQ(sse_stream_conn_count(&stream), 1u);
 }
 
-// 3. AddConnection_WhenFull_ReturnsNegative - 満杯時に-1
+// 3. AddConnection_WhenFull_ReturnsNegative - returns -1 when pool is full
 TEST_F(SSEStreamTest, AddConnection_WhenFull_ReturnsNegative) {
   for (int32_t i = 0; i < SSE_CONN_MAX; ++i) {
     int32_t result = sse_stream_add_connection(&stream, 100 + i);
@@ -50,7 +50,7 @@ TEST_F(SSEStreamTest, AddConnection_WhenFull_ReturnsNegative) {
   EXPECT_LT(overflow_result, 0);
 }
 
-// 4. RemoveConnection_Success - 接続削除
+// 4. RemoveConnection_Success - removes connection by fd
 TEST_F(SSEStreamTest, RemoveConnection_Success) {
   const int32_t fd = 7;
   sse_stream_add_connection(&stream, fd);
@@ -62,7 +62,7 @@ TEST_F(SSEStreamTest, RemoveConnection_Success) {
   EXPECT_EQ(sse_stream_conn_count(&stream), 0u);
 }
 
-// 5. RemoveConnection_NotFound - 存在しないfd
+// 5. RemoveConnection_NotFound - returns false for unknown fd
 TEST_F(SSEStreamTest, RemoveConnection_NotFound) {
   sse_stream_add_connection(&stream, 10);
 
@@ -72,7 +72,7 @@ TEST_F(SSEStreamTest, RemoveConnection_NotFound) {
   EXPECT_EQ(sse_stream_conn_count(&stream), 1u);
 }
 
-// 6. FindConnection_Found - fd検索成功
+// 6. FindConnection_Found - returns pointer for existing fd
 TEST_F(SSEStreamTest, FindConnection_Found) {
   const int32_t fd = 55;
   sse_stream_add_connection(&stream, fd);
@@ -82,7 +82,7 @@ TEST_F(SSEStreamTest, FindConnection_Found) {
   EXPECT_NE(conn, nullptr);
 }
 
-// 7. FindConnection_NotFound - fd検索失敗
+// 7. FindConnection_NotFound - returns NULL for unknown fd
 TEST_F(SSEStreamTest, FindConnection_NotFound) {
   sse_stream_add_connection(&stream, 10);
 
@@ -91,7 +91,7 @@ TEST_F(SSEStreamTest, FindConnection_NotFound) {
   EXPECT_EQ(conn, nullptr);
 }
 
-// 8. ConnCount_ReturnsActive - アクティブ接続数
+// 8. ConnCount_ReturnsActive - returns number of active connections
 TEST_F(SSEStreamTest, ConnCount_ReturnsActive) {
   EXPECT_EQ(sse_stream_conn_count(&stream), 0u);
 
@@ -108,7 +108,7 @@ TEST_F(SSEStreamTest, ConnCount_ReturnsActive) {
   EXPECT_EQ(sse_stream_conn_count(&stream), 2u);
 }
 
-// 9. EnqueueEvent - イベントキュー追加
+// 9. EnqueueEvent - adds event to queue
 TEST_F(SSEStreamTest, EnqueueEvent) {
   SSEEvent event;
   memset(&event, 0, sizeof(event));

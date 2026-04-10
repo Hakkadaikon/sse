@@ -51,8 +51,8 @@ protected:
 
 // ---------------------------------------------------------------------------
 // 1. SSEResponseHeaderReachesClient
-//    サーバー側fdでsse_build_response_headerの結果をsend、
-//    クライアント側fdでrecvしてtext/event-streamが含まれることを確認
+//    Send sse_build_response_header result via server fd,
+//    recv on client fd and verify text/event-stream is present
 // ---------------------------------------------------------------------------
 TEST_F(SSEServerTest, SSEResponseHeaderReachesClient) {
   // Arrange
@@ -75,8 +75,8 @@ TEST_F(SSEServerTest, SSEResponseHeaderReachesClient) {
 
 // ---------------------------------------------------------------------------
 // 2. EventReachesClientInSSEFormat
-//    サーバー側でSSEイベントをシリアライズしてsend、
-//    クライアント側でrecvして"data:hello\n\n"形式で届くことを確認
+//    Serialize SSE event on server side and send,
+//    recv on client side and verify "data:hello\n\n" format
 // ---------------------------------------------------------------------------
 TEST_F(SSEServerTest, EventReachesClientInSSEFormat) {
   // Arrange
@@ -100,7 +100,7 @@ TEST_F(SSEServerTest, EventReachesClientInSSEFormat) {
 
 // ---------------------------------------------------------------------------
 // 3. MultipleEventsReachClient
-//    2つのイベントを連続送信し、クライアント側で両方受信できることを確認
+//    Send two events consecutively, verify client receives both
 // ---------------------------------------------------------------------------
 TEST_F(SSEServerTest, MultipleEventsReachClient) {
   // Arrange
@@ -137,7 +137,7 @@ TEST_F(SSEServerTest, MultipleEventsReachClient) {
 
 // ---------------------------------------------------------------------------
 // 4. CommentKeepAliveReachesClient
-//    コメント行(": keepalive\n")をsendし、クライアント側で受信確認
+//    Send comment line (": keepalive\n"), verify client receives it
 // ---------------------------------------------------------------------------
 TEST_F(SSEServerTest, CommentKeepAliveReachesClient) {
   // Arrange
@@ -160,8 +160,8 @@ TEST_F(SSEServerTest, CommentKeepAliveReachesClient) {
 
 // ---------------------------------------------------------------------------
 // 5. LastEventIdExtractedFromRequest
-//    HTTPリクエスト文字列をsend、サーバー側でrecv -> extract_http_request
-//    -> sse_conn_extract_last_event_idの一連の流れを検証
+//    Send HTTP request string, recv on server side -> extract_http_request
+//    -> sse_conn_extract_last_event_id end-to-end verification
 // ---------------------------------------------------------------------------
 TEST_F(SSEServerTest, LastEventIdExtractedFromRequest) {
   // Arrange
@@ -173,22 +173,22 @@ TEST_F(SSEServerTest, LastEventIdExtractedFromRequest) {
     "\r\n";
   size_t request_len = std::strlen(http_request);
 
-  // Act: クライアント側からHTTPリクエストを送信
+  // Act: send HTTP request from client side
   ssize_t sent = send(client_fd, http_request, request_len, 0);
   ASSERT_EQ(static_cast<ssize_t>(request_len), sent);
 
-  // サーバー側でrecv
+  // Recv on server side
   char    recv_buf[4096];
   ssize_t n = recv(server_fd, recv_buf, sizeof(recv_buf), 0);
   ASSERT_GT(n, 0);
 
-  // extract_http_requestでパース
+  // Parse with extract_http_request
   HTTPRequest parsed;
   std::memset(&parsed, 0, sizeof(parsed));
   bool parse_ok = extract_http_request(recv_buf, static_cast<size_t>(n), &parsed);
   ASSERT_TRUE(parse_ok);
 
-  // sse_conn_extract_last_event_idでLast-Event-IDを取得
+  // Extract Last-Event-ID via sse_conn_extract_last_event_id
   SSEConnection conn;
   sse_conn_init(&conn);
   sse_conn_open(&conn, server_fd);

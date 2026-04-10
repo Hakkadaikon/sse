@@ -14,7 +14,7 @@ protected:
   }
 };
 
-// 1. init後に全フィールドがデフォルト値
+// 1. Init sets all fields to default values
 TEST_F(SSEEventTest, InitSetsAllFieldsToZero) {
   bool result = sse_event_init(&event);
 
@@ -25,7 +25,7 @@ TEST_F(SSEEventTest, InitSetsAllFieldsToZero) {
   EXPECT_EQ(event.retry_ms, SSE_RETRY_UNSET);
 }
 
-// 2. dataのみのシリアライズ
+// 2. Serialize with data only
 TEST_F(SSEEventTest, SerializeWithDataOnly) {
   sse_event_init(&event);
   std::strcpy(event.data, "hello");
@@ -38,7 +38,7 @@ TEST_F(SSEEventTest, SerializeWithDataOnly) {
   EXPECT_EQ(written, std::strlen(expected));
 }
 
-// 3. 改行含むdata分割
+// 3. Serialize splits data on newlines
 TEST_F(SSEEventTest, SerializeWithNewlineInData) {
   sse_event_init(&event);
   std::strcpy(event.data, "hello\nworld");
@@ -51,7 +51,7 @@ TEST_F(SSEEventTest, SerializeWithNewlineInData) {
   EXPECT_EQ(written, std::strlen(expected));
 }
 
-// 4. 全フィールド指定のシリアライズ
+// 4. Serialize with all fields set
 TEST_F(SSEEventTest, SerializeWithAllFields) {
   sse_event_init(&event);
   std::strcpy(event.data, "payload");
@@ -71,7 +71,7 @@ TEST_F(SSEEventTest, SerializeWithAllFields) {
   EXPECT_EQ(result.substr(result.size() - 2, 1), "\n");
 }
 
-// 5. retry:3000のシリアライズ
+// 5. Serialize with retry field
 TEST_F(SSEEventTest, SerializeWithRetry) {
   sse_event_init(&event);
   std::strcpy(event.data, "test");
@@ -85,7 +85,7 @@ TEST_F(SSEEventTest, SerializeWithRetry) {
   EXPECT_NE(result.find("data:test\n"), std::string::npos);
 }
 
-// 6. コメント行
+// 6. Serialize comment line
 TEST_F(SSEEventTest, SerializeComment) {
   const char* comment = "keepalive";
   char        buffer[SSE_SERIALIZE_BUFFER_CAPACITY] = {};
@@ -98,7 +98,7 @@ TEST_F(SSEEventTest, SerializeComment) {
   EXPECT_EQ(written, std::strlen(expected));
 }
 
-// 7. HTTPレスポンスヘッダ
+// 7. Build HTTP response header
 TEST_F(SSEEventTest, BuildResponseHeader) {
   char buffer[SSE_SERIALIZE_BUFFER_CAPACITY] = {};
 
@@ -111,7 +111,7 @@ TEST_F(SSEEventTest, BuildResponseHeader) {
   EXPECT_NE(result.find("200"), std::string::npos);
 }
 
-// 8. バッファ不足時のエラー
+// 8. Serialize returns 0 on buffer overflow
 TEST_F(SSEEventTest, SerializeBufferOverflow) {
   sse_event_init(&event);
   std::strcpy(event.data, "hello");
