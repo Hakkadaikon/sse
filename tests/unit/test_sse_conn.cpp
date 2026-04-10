@@ -5,6 +5,8 @@ extern "C" {
 #undef value
 #include <gtest/gtest.h>
 #include <cstring>
+#include <sys/socket.h>
+#include <unistd.h>
 
 class SSEConnTest : public ::testing::Test {
 protected:
@@ -99,4 +101,50 @@ TEST_F(SSEConnTest, IsActive_WhenInactive) {
   bool result = sse_conn_is_active(&conn);
 
   EXPECT_FALSE(result);
+}
+
+TEST_F(SSEConnTest, SendHeader_Success) {
+  int fds[2];
+  ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, fds), 0);
+
+  sse_conn_init(&conn);
+  sse_conn_open(&conn, fds[0]);
+
+  bool result = sse_conn_send_header(&conn);
+  EXPECT_TRUE(result);
+
+  char recv_buf[1024] = {};
+  ssize_t n = recv(fds[1], recv_buf, sizeof(recv_buf) - 1, 0);
+  ASSERT_GT(n, 0);
+  recv_buf[n] = '\0';
+
+  EXPECT_NE(strstr(recv_buf, "text/event-stream"), nullptr);
+
+  close(fds[0]);
+  close(fds[1]);
+}
+
+TEST_F(SSEConnTest, SendEvent_Success) {
+  int fds[2];
+  ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, fds), 0);
+
+  sse_conn_init(&conn);
+  sse_conn_open(&conn, fds[0]);
+
+  SSEEvent event;
+  sse_event_init(&event);
+  strncpy(event.data, "hello", SSE_EVENT_DATA_CAPACITY - 1);
+
+  bool result = sse_conn_send_event(&conn, &event);
+  EXPECT_TRUE(result);
+
+  char recv_buf[1024] = {};
+  ssize_t n = recv(fds[1], recv_buf, sizeof(recv_buf) - 1, 0);
+  ASSERT_GT(n, 0);
+  recv_buf[n] = '\0';
+
+  EXPECT_NE(strstr(recv_buf, "data:hello\n"), nullptr);
+
+  close(fds[0]);
+  close(fds[1]);
 }
