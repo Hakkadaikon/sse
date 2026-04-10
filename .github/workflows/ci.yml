@@ -72,6 +72,9 @@ jobs:
       - name: Run integration tests
         run: ./build/tests/integration_tests --gtest_output=xml:build/integration_test_results.xml
 
+      - name: Run API tests
+        run: ./build/tests/api_tests --gtest_output=xml:build/api_test_results.xml
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
