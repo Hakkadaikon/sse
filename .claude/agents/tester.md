@@ -52,13 +52,14 @@ Each cycle must proceed in the following order, **confirming with the user after
 
 ```
 tests/
-├── CMakeLists.txt           # Test CMake config (Google Test setup)
-├── unit/                    # Unit tests
-│   ├── test_sse_event.cpp   # SSE event struct and serialization tests
-│   ├── test_sse_conn.cpp    # SSE connection management tests
-│   └── test_sse_stream.cpp  # SSE stream management tests
-└── integration/             # Integration tests
-    └── test_sse_server.cpp  # SSE stream verification with socket connections
+├── CMakeLists.txt              # Test CMake config (Google Test setup)
+├── unit/                       # Unit tests
+│   ├── test_sse_event.cpp      # SSE event struct and serialization tests
+│   ├── test_sse_conn.cpp       # SSE connection management tests
+│   ├── test_sse_stream.cpp     # SSE stream management tests
+│   └── test_sse_server_api.cpp # High-level SSE server API tests
+└── integration/                # Integration tests
+    └── test_sse_server.cpp     # SSE stream verification with socket connections
 ```
 
 ## Test CMakeLists.txt

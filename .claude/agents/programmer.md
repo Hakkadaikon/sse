@@ -58,8 +58,8 @@ Do not use any standard library functions.
 
 | Do NOT use | Use instead |
 |---|---|
-| `strlen` | `nostr_strlen` / `nostr_strnlen` (`src/util/string.h`) |
-| `strcmp` | `nostr_strncmp` (`src/util/string.h`) |
+| `strlen` | `sse_strlen` / `sse_strnlen` (`src/util/string.h`) |
+| `strcmp` | `sse_strncmp` (`src/util/string.h`) |
 | `memcpy` | `_memcpy` (`src/util/allocator.h`) |
 | `memset` | `_memset` / `_memset_s` (`src/util/allocator.h`) |
 | `malloc` / `free` | `_alloc` / `_free` (`src/util/allocator.h`) |

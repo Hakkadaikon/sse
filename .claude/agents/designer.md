@@ -93,6 +93,12 @@ Follow the conventions derived from existing code:
 
 ```
 src/
+├── sse/           # SSE protocol stack
+│   ├── sse.h      # High-level server API (SSEServer, callbacks)
+│   ├── sse.c      # Server event loop, connection handling
+│   ├── sse_event.h/c   # Event serialization (data/event/id/retry)
+│   ├── sse_conn.h/c    # Per-client connection management
+│   └── sse_stream.h/c  # Multi-client stream, broadcast, event queue
 ├── http/          # HTTP protocol layer
 │   ├── http.h     # Public API (structs + function declarations)
 │   └── http.c     # Implementation (internal functions are static inline)
@@ -105,6 +111,22 @@ src/
 └── arch/          # Architecture abstraction layer
     └── linux/x86_64/
 ```
+
+## High-Level API Pattern
+
+The `sse/sse.h` provides a callback-based server API:
+
+```c
+SSEServer server;
+SSEServerConfig config = { .port = 8080, .backlog = 128, .event_interval_ms = 2000 };
+
+sse_server_init(&server, &config);
+sse_server_on_event(&server, my_callback, my_data);
+sse_server_run(&server);   // blocking
+sse_server_cleanup(&server);
+```
+
+Users provide an `SSEEventCallback` that receives an `SSEEvent*` and `void* user_data`, returning `true` to broadcast or `false` to skip. This design supports any user data type via the void pointer.
 
 # Design Task
 
