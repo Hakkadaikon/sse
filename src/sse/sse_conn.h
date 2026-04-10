@@ -25,5 +25,7 @@ bool sse_conn_extract_last_event_id(
   size_t                      header_size);
 void sse_conn_close(SSEConnection* conn);
 bool sse_conn_is_active(const SSEConnection* conn);
+bool sse_conn_send_header(SSEConnection* conn);
+bool sse_conn_send_event(SSEConnection* conn, const SSEEvent* event);
 
 #endif

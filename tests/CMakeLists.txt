@@ -9,11 +9,12 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-# SSE source files for tests (minimal - only what's needed)
+# SSE source files for tests
 set(SSE_SOURCES
   ${CMAKE_SOURCE_DIR}/src/sse/sse_event.c
   ${CMAKE_SOURCE_DIR}/src/sse/sse_conn.c
   ${CMAKE_SOURCE_DIR}/src/sse/sse_stream.c
+  ${CMAKE_SOURCE_DIR}/src/util/log.c
 )
 
 # Unit tests

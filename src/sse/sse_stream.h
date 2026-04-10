@@ -2,6 +2,7 @@
 #define SSE_SSE_STREAM_H_
 
 #include "../util/types.h"
+#include "../http/http.h"
 #include "sse_conn.h"
 #include "sse_event.h"
 
@@ -29,5 +30,9 @@ bool           sse_stream_remove_connection(SSEStream* stream, const int32_t fd)
 SSEConnection* sse_stream_find_connection(SSEStream* stream, const int32_t fd);
 size_t         sse_stream_conn_count(const SSEStream* stream);
 void           sse_stream_enqueue_event(SSEStream* stream, const SSEEvent* event);
+bool           sse_stream_is_sse_request(const HTTPRequest* request);
+size_t         sse_stream_broadcast(SSEStream* stream, const SSEEvent* event);
+size_t         sse_stream_broadcast_comment(SSEStream* stream, const char* comment);
+size_t         sse_stream_replay_events(SSEStream* stream, int32_t fd, const char* last_event_id);
 
 #endif
