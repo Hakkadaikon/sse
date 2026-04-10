@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(sse C)
+project(sse C CXX)
 enable_language(ASM)
 
 # Set a default build type if not specified (for single-config generators)
@@ -65,3 +65,6 @@ target_compile_options(
 #target_link_options(sse PRIVATE -flto)
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
 set(BUILD_SHARED_LIBS OFF)
+
+# Tests
+add_subdirectory(tests)
