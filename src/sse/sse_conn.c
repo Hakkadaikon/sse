@@ -1,9 +1,9 @@
 #include "sse_conn.h"
-#include "sse_event.h"
 
+#include "../arch/send.h"
 #include "../util/allocator.h"
 #include "../util/string.h"
-#include "../arch/send.h"
+#include "sse_event.h"
 
 static inline bool header_key_matches(
   const HTTPRequestHeaderLine* header,

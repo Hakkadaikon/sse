@@ -1,8 +1,8 @@
 #include "sse_stream.h"
 
+#include "../arch/send.h"
 #include "../util/allocator.h"
 #include "../util/string.h"
-#include "../arch/send.h"
 
 static inline int32_t find_inactive_slot(const SSEStream* stream)
 {
@@ -167,9 +167,9 @@ size_t sse_stream_replay_events(SSEStream* stream, int32_t fd, const char* last_
   require_not_null(stream, 0);
   require_not_null(last_event_id, 0);
 
-  size_t replayed   = 0;
-  bool   found_id   = false;
-  size_t id_len     = nostr_strnlen(last_event_id, SSE_EVENT_ID_CAPACITY);
+  size_t replayed = 0;
+  bool   found_id = false;
+  size_t id_len   = nostr_strnlen(last_event_id, SSE_EVENT_ID_CAPACITY);
 
   for (size_t i = 0; i < stream->queue_size; i++) {
     size_t index = (stream->queue_head + i) % SSE_EVENT_QUEUE_CAPACITY;

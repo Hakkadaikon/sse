@@ -1,8 +1,8 @@
 #ifndef SSE_SSE_STREAM_H_
 #define SSE_SSE_STREAM_H_
 
-#include "../util/types.h"
 #include "../http/http.h"
+#include "../util/types.h"
 #include "sse_conn.h"
 #include "sse_event.h"
 

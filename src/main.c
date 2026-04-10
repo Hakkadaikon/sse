@@ -8,33 +8,33 @@
  *   curl -N http://localhost:8080/events
  */
 
-#include "util/types.h"
-#include "util/allocator.h"
-#include "util/string.h"
-#include "util/log.h"
-#include "util/signal.h"
-#include "arch/listen.h"
 #include "arch/accept.h"
-#include "arch/recv.h"
-#include "arch/send.h"
 #include "arch/close.h"
 #include "arch/epoll.h"
 #include "arch/linux/epoll.h"
-#include "arch/optimize_socket.h"
 #include "arch/linux/fcntl.h"
 #include "arch/linux/sockoption.h"
+#include "arch/listen.h"
+#include "arch/optimize_socket.h"
+#include "arch/recv.h"
+#include "arch/send.h"
 #include "http/http.h"
-#include "sse/sse_event.h"
 #include "sse/sse_conn.h"
+#include "sse/sse_event.h"
 #include "sse/sse_stream.h"
+#include "util/allocator.h"
+#include "util/log.h"
+#include "util/signal.h"
+#include "util/string.h"
+#include "util/types.h"
 
 enum {
-  SERVER_PORT        = 8080,
-  SERVER_BACKLOG     = 128,
-  EPOLL_MAX_EVENTS   = 64,
-  RECV_BUFFER_SIZE   = 4096,
-  EPOLL_TIMEOUT_MS   = 2000,
-  MSG_NOSIGNAL_FLAG  = 0x4000
+  SERVER_PORT       = 8080,
+  SERVER_BACKLOG    = 128,
+  EPOLL_MAX_EVENTS  = 64,
+  RECV_BUFFER_SIZE  = 4096,
+  EPOLL_TIMEOUT_MS  = 2000,
+  MSG_NOSIGNAL_FLAG = 0x4000
 };
 
 static uint16_t htons_impl(uint16_t val)
@@ -64,8 +64,8 @@ static int32_t create_listen_socket(uint16_t port)
 
   struct sockaddr_in addr;
   _memset(&addr, 0, sizeof(addr));
-  addr.sin_family = AF_INET;
-  addr.sin_port   = htons_impl(port);
+  addr.sin_family      = AF_INET;
+  addr.sin_port        = htons_impl(port);
   addr.sin_addr.s_addr = INADDR_ANY;
 
   if (internal_bind(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
@@ -192,7 +192,7 @@ int main(void)
   bool running = true;
   while (running) {
     WebSocketEpollEvent events[EPOLL_MAX_EVENTS];
-    int32_t nfds = internal_epoll_wait(epoll_fd, events, EPOLL_MAX_EVENTS, EPOLL_TIMEOUT_MS);
+    int32_t             nfds = internal_epoll_wait(epoll_fd, events, EPOLL_MAX_EVENTS, EPOLL_TIMEOUT_MS);
 
     /* Handle epoll events */
     for (int32_t i = 0; i < nfds; i++) {
@@ -215,9 +215,9 @@ int main(void)
       _memset(count_str, 0, sizeof(count_str));
       itoa(event_counter, count_str, sizeof(count_str));
 
-      const char* prefix = "count:";
-      size_t prefix_len  = 6;
-      size_t count_len   = nostr_strnlen(count_str, sizeof(count_str));
+      const char* prefix     = "count:";
+      size_t      prefix_len = 6;
+      size_t      count_len  = nostr_strnlen(count_str, sizeof(count_str));
       _memcpy(event.data, prefix, prefix_len);
       _memcpy(event.data + prefix_len, count_str, count_len);
 

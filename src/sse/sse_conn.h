@@ -1,13 +1,13 @@
 #ifndef SSE_SSE_CONN_H_
 #define SSE_SSE_CONN_H_
 
-#include "../util/types.h"
 #include "../http/http.h"
+#include "../util/types.h"
 #include "sse_event.h"
 
 enum {
-  SSE_CONN_STATE_INACTIVE  = 0,
-  SSE_CONN_STATE_ACTIVE    = 1
+  SSE_CONN_STATE_INACTIVE = 0,
+  SSE_CONN_STATE_ACTIVE   = 1
 };
 
 typedef struct {

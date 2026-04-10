@@ -82,7 +82,7 @@ static inline size_t serialize_field_retry(
 {
   if (retry_ms == SSE_RETRY_UNSET) return 1;
 
-  char   num_buf[16];
+  char num_buf[16];
   _memset(num_buf, 0, sizeof(num_buf));
   size_t num_len = itoa(retry_ms, num_buf, sizeof(num_buf));
   if (num_len == 0) return 0;
