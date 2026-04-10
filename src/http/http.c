@@ -17,7 +17,7 @@ static inline size_t extract_keyword(
     return -1;
   }
 
-  websocket_memcpy(output, buffer, keyword_length);
+  _memcpy(output, buffer, keyword_length);
   output[keyword_length] = '\0';
   return keyword_length;
 }
