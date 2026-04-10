@@ -173,7 +173,7 @@ int main(void)
   int32_t epoll_fd = internal_epoll_create1(0);
   if (epoll_fd < 0) {
     internal_close(listen_fd);
-    return;
+    return 1;
   }
 
   /* Register listen socket with epoll */
