@@ -9,7 +9,7 @@ static inline int32_t linux_x8664_epoll_ctl(
   const int32_t        epoll_fd,
   const int32_t        op,
   const int32_t        fd,
-  WebSocketEpollEvent* event)
+  SSEEpollEvent* event)
 {
   int32_t ret = linux_x8664_asm_syscall4(
     __NR_epoll_ctl,
@@ -34,7 +34,7 @@ static inline int32_t linux_x8664_epoll_create1(const int32_t flags)
 
 static inline int32_t linux_x8664_epoll_wait(
   const int32_t        epfd,
-  WebSocketEpollEvent* events,
+  SSEEpollEvent* events,
   const int32_t        maxevents,
   const int32_t        timeout)
 {

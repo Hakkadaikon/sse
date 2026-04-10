@@ -107,7 +107,7 @@ bool sse_stream_is_sse_request(const HTTPRequest* request)
 {
   require_not_null(request, false);
 
-  return nostr_strncmp(request->line.method, "GET", 3);
+  return sse_strncmp(request->line.method, "GET", 3);
 }
 
 size_t sse_stream_broadcast(SSEStream* stream, const SSEEvent* event)
@@ -141,7 +141,7 @@ size_t sse_stream_broadcast_comment(SSEStream* stream, const char* comment)
   require_not_null(stream, 0);
   require_not_null(comment, 0);
 
-  size_t comment_len = nostr_strnlen(comment, 256);
+  size_t comment_len = sse_strnlen(comment, 256);
 
   char   buf[SSE_SERIALIZE_BUFFER_CAPACITY];
   size_t len = sse_serialize_comment(comment, comment_len, buf, sizeof(buf));
@@ -169,7 +169,7 @@ size_t sse_stream_replay_events(SSEStream* stream, int32_t fd, const char* last_
 
   size_t replayed = 0;
   bool   found_id = false;
-  size_t id_len   = nostr_strnlen(last_event_id, SSE_EVENT_ID_CAPACITY);
+  size_t id_len   = sse_strnlen(last_event_id, SSE_EVENT_ID_CAPACITY);
 
   for (size_t i = 0; i < stream->queue_size; i++) {
     size_t index = (stream->queue_head + i) % SSE_EVENT_QUEUE_CAPACITY;
@@ -179,7 +179,7 @@ size_t sse_stream_replay_events(SSEStream* stream, int32_t fd, const char* last_
     }
 
     if (!found_id) {
-      if (nostr_strncmp(stream->event_queue[index].event.id, last_event_id, id_len)) {
+      if (sse_strncmp(stream->event_queue[index].event.id, last_event_id, id_len)) {
         found_id = true;
       }
       continue;

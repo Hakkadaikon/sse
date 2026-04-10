@@ -143,15 +143,15 @@
 #include <cstring>
 #else
 // For C compilation (production): use custom implementations
-#define errno (*nostr_errno_location())
+#define errno (*sse_errno_location())
 
-static int32_t* nostr_errno_location(void)
+static int32_t* sse_errno_location(void)
 {
   static thread_local int32_t my_errno = 0;
   return &my_errno;
 }
 
-static inline const char* nostr_strerror(const int errnum)
+static inline const char* sse_strerror(const int errnum)
 {
   switch (errnum) {
     case EPERM:
@@ -421,7 +421,7 @@ static inline const char* nostr_strerror(const int errnum)
   }
 }
 
-#define strerror nostr_strerror
+#define strerror sse_strerror
 
 #endif  // __cplusplus
 

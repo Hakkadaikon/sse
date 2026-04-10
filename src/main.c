@@ -144,7 +144,7 @@ static void handle_new_connection(
   internal_sendto(client_fd, header_buf, header_len, 0, NULL, 0);
 
   /* Register with epoll for disconnect detection */
-  WebSocketEpollEvent ev;
+  SSEEpollEvent ev;
   ev.events  = EPOLLIN | EPOLLRDHUP;
   ev.data.fd = client_fd;
   internal_epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd, &ev);
@@ -177,7 +177,7 @@ int main(void)
   }
 
   /* Register listen socket with epoll */
-  WebSocketEpollEvent ev;
+  SSEEpollEvent ev;
   ev.events  = EPOLLIN;
   ev.data.fd = listen_fd;
   internal_epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listen_fd, &ev);
@@ -191,7 +191,7 @@ int main(void)
 
   bool running = true;
   while (running) {
-    WebSocketEpollEvent events[EPOLL_MAX_EVENTS];
+    SSEEpollEvent events[EPOLL_MAX_EVENTS];
     int32_t             nfds = internal_epoll_wait(epoll_fd, events, EPOLL_MAX_EVENTS, EPOLL_TIMEOUT_MS);
 
     /* Handle epoll events */
@@ -217,7 +217,7 @@ int main(void)
 
       const char* prefix     = "count:";
       size_t      prefix_len = 6;
-      size_t      count_len  = nostr_strnlen(count_str, sizeof(count_str));
+      size_t      count_len  = sse_strnlen(count_str, sizeof(count_str));
       _memcpy(event.data, prefix, prefix_len);
       _memcpy(event.data + prefix_len, count_str, count_len);
 

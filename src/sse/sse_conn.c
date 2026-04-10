@@ -13,12 +13,12 @@ static inline bool header_key_matches(
   require_not_null(header, false);
   require_not_null(key, false);
 
-  size_t header_key_len = nostr_strnlen(header->key, HTTP_HEADER_KEY_CAPACITY);
+  size_t header_key_len = sse_strnlen(header->key, HTTP_HEADER_KEY_CAPACITY);
   if (header_key_len != key_len) {
     return false;
   }
 
-  return nostr_strncmp(header->key, key, key_len);
+  return sse_strncmp(header->key, key, key_len);
 }
 
 void sse_conn_init(SSEConnection* conn)
@@ -53,7 +53,7 @@ bool sse_conn_extract_last_event_id(
 
   for (size_t i = 0; i < header_size; i++) {
     if (header_key_matches(&headers[i], key, key_len)) {
-      size_t value_len = nostr_strnlen(headers[i].value, HTTP_HEADER_VALUE_CAPACITY);
+      size_t value_len = sse_strnlen(headers[i].value, HTTP_HEADER_VALUE_CAPACITY);
       if (value_len >= SSE_EVENT_ID_CAPACITY) {
         value_len = SSE_EVENT_ID_CAPACITY - 1;
       }
