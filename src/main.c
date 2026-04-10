@@ -55,7 +55,7 @@ static int32_t create_listen_socket(uint16_t port)
 {
   int32_t fd = internal_socket(AF_INET, SOCK_STREAM, 0);
   if (fd < 0) {
-    log_error("socket() failed");
+    log_error("socket() failed\n");
     return -1;
   }
 
@@ -69,13 +69,13 @@ static int32_t create_listen_socket(uint16_t port)
   addr.sin_addr.s_addr = INADDR_ANY;
 
   if (internal_bind(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-    log_error("bind() failed");
+    log_error("bind() failed\n");
     internal_close(fd);
     return -1;
   }
 
   if (internal_listen(fd, SERVER_BACKLOG) < 0) {
-    log_error("listen() failed");
+    log_error("listen() failed\n");
     internal_close(fd);
     return -1;
   }
@@ -149,7 +149,7 @@ static void handle_new_connection(
   ev.data.fd = client_fd;
   internal_epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_fd, &ev);
 
-  log_info("Client connected");
+  log_info("Client connected\n");
 }
 
 static void handle_client_disconnect(
@@ -160,7 +160,7 @@ static void handle_client_disconnect(
   internal_epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
   sse_stream_remove_connection(stream, client_fd);
   internal_close(client_fd);
-  log_info("Client disconnected");
+  log_info("Client disconnected\n");
 }
 
 int main(void)
@@ -187,7 +187,7 @@ int main(void)
 
   uint32_t event_counter = 0;
 
-  log_info("SSE server listening on port 8080");
+  log_info("SSE server listening on port 8080\n");
 
   bool running = true;
   while (running) {
@@ -227,7 +227,7 @@ int main(void)
 
       size_t sent = sse_stream_broadcast(&stream, &event);
       if (sent > 0) {
-        log_info("Broadcast event");
+        log_info("Broadcast event\n");
       }
     }
   }
