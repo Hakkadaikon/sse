@@ -192,7 +192,7 @@ int main(void)
   bool running = true;
   while (running) {
     SSEEpollEvent events[EPOLL_MAX_EVENTS];
-    int32_t             nfds = internal_epoll_wait(epoll_fd, events, EPOLL_MAX_EVENTS, EPOLL_TIMEOUT_MS);
+    int32_t       nfds = internal_epoll_wait(epoll_fd, events, EPOLL_MAX_EVENTS, EPOLL_TIMEOUT_MS);
 
     /* Handle epoll events */
     for (int32_t i = 0; i < nfds; i++) {

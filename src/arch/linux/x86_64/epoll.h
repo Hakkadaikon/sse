@@ -6,9 +6,9 @@
 #include "./asm.h"
 
 static inline int32_t linux_x8664_epoll_ctl(
-  const int32_t        epoll_fd,
-  const int32_t        op,
-  const int32_t        fd,
+  const int32_t  epoll_fd,
+  const int32_t  op,
+  const int32_t  fd,
   SSEEpollEvent* event)
 {
   int32_t ret = linux_x8664_asm_syscall4(
@@ -33,10 +33,10 @@ static inline int32_t linux_x8664_epoll_create1(const int32_t flags)
 }
 
 static inline int32_t linux_x8664_epoll_wait(
-  const int32_t        epfd,
+  const int32_t  epfd,
   SSEEpollEvent* events,
-  const int32_t        maxevents,
-  const int32_t        timeout)
+  const int32_t  maxevents,
+  const int32_t  timeout)
 {
   int32_t ret = linux_x8664_asm_syscall4(
     __NR_epoll_wait,

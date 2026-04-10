@@ -34,8 +34,8 @@ typedef union {
 
 typedef struct
 {
-  uint32_t           events;
-  int32_t            dummy;
+  uint32_t     events;
+  int32_t      dummy;
   SSEEpollData data;
 } SSEEpollEvent;
 
