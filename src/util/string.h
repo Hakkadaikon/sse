@@ -20,7 +20,7 @@
     return ret_val;                    \
   }
 #define require_not_null_or_empty(ptr, ret_val) \
-  if (is_null_or_empty(ptr)) {                  \
+  if (_is_null_or_empty(ptr)) {                  \
     return ret_val;                             \
   }
 #define require_valid_length(len, ret_val) \
@@ -32,27 +32,27 @@
     return ret_val;                  \
   }
 
-static inline bool is_empty_value(const char c)
+static inline bool _is_empty_value(const char c)
 {
   return (c == '\0');
 }
 
-static inline bool is_empty(const char* str)
+static inline bool _is_empty(const char* str)
 {
-  return (is_empty_value(value(str)));
+  return (_is_empty_value(value(str)));
 }
 
-static inline bool is_null_or_empty(const char* str)
+static inline bool _is_null_or_empty(const char* str)
 {
-  return (is_null(str) || is_empty(str));
+  return (is_null(str) || _is_empty(str));
 }
 
-static inline bool is_line_break(const char c)
+static inline bool _is_line_break(const char c)
 {
   return ((c == '\r') || (c == '\n'));
 }
 
-static inline bool is_space(const char c)
+static inline bool _is_space(const char c)
 {
   return ((c == ' ') ||
           (c == '\t') ||
@@ -62,33 +62,33 @@ static inline bool is_space(const char c)
           (c == '\f'));
 }
 
-static inline bool is_lower(const char c)
+static inline bool _is_lower(const char c)
 {
   return ((c >= 'a') && (c <= 'z'));
 }
 
-static inline bool is_upper(const char c)
+static inline bool _is_upper(const char c)
 {
   return ((c >= 'A') && (c <= 'Z'));
 }
 
-static inline bool is_digit(const char c)
+static inline bool _is_digit(const char c)
 {
   return ((c >= '0') && (c <= '9'));
 }
 
-static inline bool is_lower_hex(const char c)
+static inline bool _is_lower_hex(const char c)
 {
-  return is_digit(c) || ((c >= 'a') && (c <= 'f'));
+  return _is_digit(c) || ((c >= 'a') && (c <= 'f'));
 }
 
-static inline bool is_lower_hex_str(const char* c, const size_t len)
+static inline bool _is_lower_hex_str(const char* c, const size_t len)
 {
   require_not_null(c, false);
   require_valid_length(len, false);
 
   for (int i = 0; i < len; i++) {
-    if (!is_lower_hex(c[i])) {
+    if (!_is_lower_hex(c[i])) {
       return false;
     }
   }
@@ -96,7 +96,7 @@ static inline bool is_lower_hex_str(const char* c, const size_t len)
   return true;
 }
 
-static inline bool is_utf8_space(const char* str)
+static inline bool _is_utf8_space(const char* str)
 {
   require_not_null(str, false);
 
@@ -106,7 +106,7 @@ static inline bool is_utf8_space(const char* str)
          (str[2] == '\x80');
 }
 
-static inline bool chrcmp_sensitive(const char a, const char b)
+static inline bool _chrcmp_sensitive(const char a, const char b)
 {
   if (a != b) {
     return false;
@@ -115,7 +115,7 @@ static inline bool chrcmp_sensitive(const char a, const char b)
   return true;
 }
 
-static inline bool chrcmp(const char a, const char b)
+static inline bool _chrcmp(const char a, const char b)
 {
   char lower_a = (a >= 'A' && a <= 'Z') ? (a + 'a' - 'A') : (a);
   char lower_b = (b >= 'A' && b <= 'Z') ? (b + 'a' - 'A') : (b);
@@ -129,7 +129,7 @@ static inline bool chrcmp(const char a, const char b)
 
 // Custom strncmp: case-insensitive comparison, returns bool
 // Different from standard strncmp which is case-sensitive and returns int
-static inline bool sse_strncmp(
+static inline bool _sse_strncmp(
   const char*  str1,
   const char*  str2,
   const size_t capacity)
@@ -139,7 +139,7 @@ static inline bool sse_strncmp(
   require_valid_length(capacity, false);
 
   for (size_t i = 0; i < capacity; i++) {
-    if (!chrcmp(str1[i], str2[i])) {
+    if (!_chrcmp(str1[i], str2[i])) {
       return false;
     }
   }
@@ -148,10 +148,10 @@ static inline bool sse_strncmp(
 }
 
 #if SSE_USE_CUSTOM_STRING_FUNCS
-#define strncmp sse_strncmp
+#define strncmp _sse_strncmp
 #endif
 
-static inline bool strncmp_sensitive(
+static inline bool _strncmp_sensitive(
   const char*  str1,
   const char*  str2,
   const size_t str1capacity,
@@ -169,7 +169,7 @@ static inline bool strncmp_sensitive(
   }
 
   typedef bool (*PCompareFunc)(const char a, const char b);
-  PCompareFunc compare_func = (case_sensitive) ? chrcmp_sensitive : chrcmp;
+  PCompareFunc compare_func = (case_sensitive) ? _chrcmp_sensitive : _chrcmp;
 
   for (size_t i = 0; i < capacity; i++) {
     if (!compare_func(str1[i], str2[i])) {
@@ -180,7 +180,7 @@ static inline bool strncmp_sensitive(
   return true;
 }
 
-static inline int32_t strpos_sensitive(
+static inline int32_t _strpos_sensitive(
   const char*  base,
   const size_t base_len,
   const char*  target,
@@ -197,7 +197,7 @@ static inline int32_t strpos_sensitive(
   }
 
   for (size_t base_pos = 0; base_pos <= (base_len - target_len); base_pos++) {
-    if (strncmp_sensitive(&base[base_pos], target, base_len, target_len, case_sensitive)) {
+    if (_strncmp_sensitive(&base[base_pos], target, base_len, target_len, case_sensitive)) {
       return base_pos;
     }
   }
@@ -205,31 +205,31 @@ static inline int32_t strpos_sensitive(
   return -1;
 }
 
-static inline bool strstr_sensitive(
+static inline bool _strstr_sensitive(
   const char*  base,
   const size_t base_len,
   const char*  target,
   const size_t target_len,
   const bool   case_sensitive)
 {
-  return (strpos_sensitive(base, base_len, target, target_len, case_sensitive) != -1);
+  return (_strpos_sensitive(base, base_len, target, target_len, case_sensitive) != -1);
 }
 
-static inline int32_t skip_space(const char* buffer, const size_t buffer_size)
+static inline int32_t _skip_space(const char* buffer, const size_t buffer_size)
 {
   require_not_null(buffer, -1);
   require_valid_length(buffer_size, -1);
 
   size_t pos = 0;
-  while (!is_empty(&buffer[pos]) && pos < buffer_size) {
+  while (!_is_empty(&buffer[pos]) && pos < buffer_size) {
     char current = value(&buffer[pos]);
-    if (is_space(current)) {
+    if (_is_space(current)) {
       pos++;
       continue;
     }
 
     if (pos + 2 < buffer_size) {
-      if (is_utf8_space(&buffer[pos])) {
+      if (_is_utf8_space(&buffer[pos])) {
         pos += 3;
         continue;
       }
@@ -241,14 +241,14 @@ static inline int32_t skip_space(const char* buffer, const size_t buffer_size)
   return pos;
 }
 
-static inline int32_t skip_word(const char* buffer, const size_t buffer_size)
+static inline int32_t _skip_word(const char* buffer, const size_t buffer_size)
 {
   for (size_t i = 0; i < buffer_size; i++) {
-    if (is_space(buffer[i])) {
+    if (_is_space(buffer[i])) {
       return i;
     }
 
-    if (is_empty_value(buffer[i])) {
+    if (_is_empty_value(buffer[i])) {
       return i;
     }
 
@@ -256,7 +256,7 @@ static inline int32_t skip_word(const char* buffer, const size_t buffer_size)
       continue;
     }
 
-    if (is_utf8_space(&buffer[i])) {
+    if (_is_utf8_space(&buffer[i])) {
       return i;
     }
   }
@@ -264,7 +264,7 @@ static inline int32_t skip_word(const char* buffer, const size_t buffer_size)
   return buffer_size;
 }
 
-static inline int32_t skip_next_line(const char* buffer, const size_t buffer_len)
+static inline int32_t _skip_next_line(const char* buffer, const size_t buffer_len)
 {
   require_not_null(buffer, 0);
   require_valid_length(buffer_len - 2, 0);
@@ -288,7 +288,7 @@ static inline int32_t skip_next_line(const char* buffer, const size_t buffer_len
   return buffer_pos;
 }
 
-static inline int32_t skip_token(const char* buffer, const size_t buffer_size, const char token)
+static inline int32_t _skip_token(const char* buffer, const size_t buffer_size, const char token)
 {
   require_not_null(buffer, -1);
   require_valid_length(buffer_size, -1);
@@ -302,7 +302,7 @@ static inline int32_t skip_token(const char* buffer, const size_t buffer_size, c
   return -1;
 }
 
-static size_t inline sse_strlen(const char* str)
+static size_t inline _sse_strlen(const char* str)
 {
   require_not_null(str, 0);
 
@@ -313,7 +313,7 @@ static size_t inline sse_strlen(const char* str)
   return len - 1;
 }
 
-static size_t inline sse_strnlen(const char* str, const size_t capacity)
+static size_t inline _sse_strnlen(const char* str, const size_t capacity)
 {
   require_not_null(str, 0);
   require_valid_length(capacity, 0);
@@ -326,11 +326,11 @@ static size_t inline sse_strnlen(const char* str, const size_t capacity)
 }
 
 #if SSE_USE_CUSTOM_STRING_FUNCS
-#define strlen sse_strlen
-#define strnlen sse_strnlen
+#define strlen _sse_strlen
+#define strnlen _sse_strnlen
 #endif
 
-static inline int32_t calc_digit(int32_t value)
+static inline int32_t _calc_digit(int32_t value)
 {
   int32_t is_negative = (value < 0);
   if (is_negative) {
@@ -346,12 +346,12 @@ static inline int32_t calc_digit(int32_t value)
   return 10 + is_negative;
 }
 
-static inline size_t itoa(int32_t value, char* buffer, size_t buffer_capacity)
+static inline size_t _itoa(int32_t value, char* buffer, size_t buffer_capacity)
 {
   require_not_null(buffer, 0);
   require_valid_length(buffer_capacity, 0);
 
-  int32_t digit       = calc_digit(value);
+  int32_t digit       = _calc_digit(value);
   char*   end         = buffer + digit;
   char*   current     = end;
   int32_t is_negative = (value < 0);

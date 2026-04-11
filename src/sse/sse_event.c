@@ -50,7 +50,7 @@ static inline size_t serialize_field_event(
 {
   if (event_type[0] == '\0') return 1;
 
-  size_t len = sse_strnlen(event_type, SSE_EVENT_TYPE_CAPACITY);
+  size_t len = _sse_strnlen(event_type, SSE_EVENT_TYPE_CAPACITY);
   if (!append_to_buffer(buffer, buffer_capacity, pos, "event:", 6)) return 0;
   if (!append_to_buffer(buffer, buffer_capacity, pos, event_type, len)) return 0;
   if (*pos >= buffer_capacity) return 0;
@@ -66,7 +66,7 @@ static inline size_t serialize_field_id(
 {
   if (id[0] == '\0') return 1;
 
-  size_t len = sse_strnlen(id, SSE_EVENT_ID_CAPACITY);
+  size_t len = _sse_strnlen(id, SSE_EVENT_ID_CAPACITY);
   if (!append_to_buffer(buffer, buffer_capacity, pos, "id:", 3)) return 0;
   if (!append_to_buffer(buffer, buffer_capacity, pos, id, len)) return 0;
   if (*pos >= buffer_capacity) return 0;
@@ -84,7 +84,7 @@ static inline size_t serialize_field_retry(
 
   char num_buf[16];
   _memset(num_buf, 0, sizeof(num_buf));
-  size_t num_len = itoa(retry_ms, num_buf, sizeof(num_buf));
+  size_t num_len = _itoa(retry_ms, num_buf, sizeof(num_buf));
   if (num_len == 0) return 0;
 
   if (!append_to_buffer(buffer, buffer_capacity, pos, "retry:", 6)) return 0;
@@ -171,7 +171,7 @@ size_t sse_build_response_header(char* buffer, const size_t buffer_size)
     "Connection: keep-alive\r\n"
     "\r\n";
 
-  size_t header_len = sse_strlen(header);
+  size_t header_len = _sse_strlen(header);
   if (header_len >= buffer_size) return 0;
 
   _memcpy(buffer, header, header_len);

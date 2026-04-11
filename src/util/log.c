@@ -3,7 +3,7 @@
 #include "../arch/write.h"
 #include "./string.h"
 
-static inline void hex_dump_char(char c)
+static inline void _hex_dump_char(char c)
 {
   unsigned char uc           = (unsigned char)c;
   char          hex_digits[] = "0123456789ABCDEF";
@@ -16,7 +16,7 @@ static inline void hex_dump_char(char c)
   internal_write(STDOUT_FILENO, buf, 3);
 }
 
-bool hex_dump_local(const void* restrict data, size_t size)
+bool _hex_dump_local(const void* restrict data, size_t size)
 {
   require_not_null(data, false);
   require_valid_length(size, false);
@@ -24,7 +24,7 @@ bool hex_dump_local(const void* restrict data, size_t size)
   const char* byte_data = (const char*)data;
 
   for (size_t i = 0; i < size; i++) {
-    hex_dump_char(byte_data[i]);
+    _hex_dump_char(byte_data[i]);
 
     if ((i + 1) % 16 == 0) {
       internal_write(STDOUT_FILENO, "\n", 1);
@@ -38,7 +38,7 @@ bool hex_dump_local(const void* restrict data, size_t size)
   return true;
 }
 
-bool log_dump_local(const int32_t fd, const char* restrict str, const char* file, int line)
+bool _log_dump_local(const int32_t fd, const char* restrict str, const char* file, int line)
 {
   require_valid_length(fd, false);
   require_not_null(str, false);
@@ -49,7 +49,7 @@ bool log_dump_local(const int32_t fd, const char* restrict str, const char* file
 
 #ifdef LOG_LEVE_DEBUG
   char   linestr[8];
-  size_t linestr_size   = itoa(line, linestr, sizeof(linestr));
+  size_t linestr_size   = _itoa(line, linestr, sizeof(linestr));
   linestr[linestr_size] = '\0';
 
   (void)internal_write(fd, "[", 1);
@@ -62,7 +62,7 @@ bool log_dump_local(const int32_t fd, const char* restrict str, const char* file
   return true;
 }
 
-bool var_dump_local(const int32_t fd, const char* restrict str, const int32_t value)
+bool _var_dump_local(const int32_t fd, const char* restrict str, const int32_t value)
 {
   require_valid_length(fd, false);
   require_not_null(str, false);
@@ -72,14 +72,14 @@ bool var_dump_local(const int32_t fd, const char* restrict str, const int32_t va
   (void)internal_write(fd, str, len);
 
   char   buffer[32];
-  size_t buffer_size      = itoa(value, buffer, sizeof(buffer));
+  size_t buffer_size      = _itoa(value, buffer, sizeof(buffer));
   buffer[buffer_size]     = '\n';
   buffer[buffer_size + 1] = '\0';
 
   return (internal_write(fd, buffer, buffer_size + 1) > 0);
 }
 
-bool str_dump_local(const int32_t fd, const char* restrict str, const char* restrict value)
+bool _str_dump_local(const int32_t fd, const char* restrict str, const char* restrict value)
 {
   require_valid_length(fd, false);
   require_not_null(str, false);

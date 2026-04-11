@@ -5,15 +5,15 @@
 
 static bool rise_signal = false;
 
-static void signal_handler(int32_t signum);
-bool        is_rise_signal();
-bool        signal_init();
+static void _signal_handler(int32_t signum);
+bool        _is_rise_signal();
+bool        _signal_init();
 
-bool signal_init()
+bool _signal_init()
 {
   struct sigaction sa;
   _memset_s(&sa, sizeof(sa), 0x00, sizeof(sa));
-  sa.sa_handler = signal_handler;
+  sa.sa_handler = _signal_handler;
   internal_sigemptyset(&sa.sa_mask);
 
   int32_t signals[] = {SIGHUP, SIGINT, SIGTERM};
@@ -27,12 +27,12 @@ bool signal_init()
   return true;
 }
 
-static void signal_handler(int32_t signum)
+static void _signal_handler(int32_t signum)
 {
   rise_signal = true;
 }
 
-bool is_rise_signal()
+bool _is_rise_signal()
 {
   return rise_signal;
 }

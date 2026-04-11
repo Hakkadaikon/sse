@@ -21,8 +21,8 @@ static inline int32_t linux_x8664_sigaction(const int32_t signum, struct sigacti
     oldact,
     sizeof(sigset_t));
 
-  // var_dump_local(1, "sigaction ret:", ret);
-  // var_dump_local(1, "signum:", signum);
+  // _var_dump_local(1, "sigaction ret:", ret);
+  // _var_dump_local(1, "signum:", signum);
   SYSCALL_EARLY_RETURN(ret);
   return ret;
 }

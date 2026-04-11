@@ -12,7 +12,7 @@ static inline size_t extract_keyword(
   require_valid_length(buffer_size, -1);
   require_not_null(output, -1);
 
-  int32_t keyword_length = skip_token(buffer, buffer_size, token);
+  int32_t keyword_length = _skip_token(buffer, buffer_size, token);
   if (keyword_length == -1) {
     return -1;
   }
@@ -110,7 +110,7 @@ bool extract_http_request_header(
       return false;
     }
 
-    size_t new_pos = skip_next_line(current_buffer, remain_buffer_size);
+    size_t new_pos = _skip_next_line(current_buffer, remain_buffer_size);
     buffer_pos += new_pos;
     remain_buffer_size -= new_pos;
     header_pos++;
@@ -145,7 +145,7 @@ bool extract_http_request(
     return false;
   }
 
-  size_t new_pos = skip_next_line(buffer, remain_buffer_size);
+  size_t new_pos = _skip_next_line(buffer, remain_buffer_size);
   if (new_pos == remain_buffer_size) {
     return false;
   }

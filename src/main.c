@@ -19,9 +19,9 @@ static bool on_tick(SSEEvent* event, void* user_data)
 
   char buf[16];
   _memset(buf, 0, sizeof(buf));
-  itoa(*counter, buf, sizeof(buf));
+  _itoa(*counter, buf, sizeof(buf));
 
-  size_t buf_len = sse_strnlen(buf, sizeof(buf));
+  size_t buf_len = _sse_strnlen(buf, sizeof(buf));
 
   _memcpy(event->data, "count:", 6);
   _memcpy(event->data + 6, buf, buf_len);

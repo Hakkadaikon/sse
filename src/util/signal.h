@@ -3,7 +3,7 @@
 
 #include "./types.h"
 
-bool is_rise_signal();
-bool signal_init();
+bool _is_rise_signal();
+bool _signal_init();
 
 #endif
