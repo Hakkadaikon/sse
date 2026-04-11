@@ -56,15 +56,17 @@ Implementation must **strictly** follow these conventions. These are absolute pr
 
 Do not use any standard library functions.
 
+All functions in `src/util/` are prefixed with underscore (`_`) to avoid standard library name collisions.
+
 | Do NOT use | Use instead |
 |---|---|
-| `strlen` | `sse_strlen` / `sse_strnlen` (`src/util/string.h`) |
-| `strcmp` | `sse_strncmp` (`src/util/string.h`) |
+| `strlen` | `_sse_strlen` / `_sse_strnlen` (`src/util/string.h`) |
+| `strcmp` | `_sse_strncmp` (`src/util/string.h`) |
 | `memcpy` | `_memcpy` (`src/util/allocator.h`) |
 | `memset` | `_memset` / `_memset_s` (`src/util/allocator.h`) |
 | `malloc` / `free` | `_alloc` / `_free` (`src/util/allocator.h`) |
 | `printf` | `log_debug` / `log_info` / `log_error` (`src/util/log.h`) |
-| `itoa` (libc) | `itoa` (custom implementation in `src/util/string.h`) |
+| `itoa` (libc) | `_itoa` (custom implementation in `src/util/string.h`) |
 
 ## Type System
 
@@ -120,10 +122,20 @@ All network I/O and file I/O must use syscall wrappers via `src/arch/`:
 
 ## String Operation Helpers
 
-`src/util/string.h` has many helpers. Check existing ones before writing new ones:
-- `skip_token`, `skip_space`, `skip_word`, `skip_next_line`
-- `strpos_sensitive`, `strstr_sensitive`
-- `is_lower`, `is_upper`, `is_digit`, `is_space`
+`src/util/string.h` has many helpers (all prefixed with `_`). Check existing ones before writing new ones:
+- `_skip_token`, `_skip_space`, `_skip_word`, `_skip_next_line`
+- `_strpos_sensitive`, `_strstr_sensitive`
+- `_is_lower`, `_is_upper`, `_is_digit`, `_is_space`
+
+## Early Return Convention
+
+All parameter validation at function entry must use require macros:
+- `require_not_null(ptr, ret_val)` — null pointer check
+- `require_valid_length(len, ret_val)` — zero/negative length check
+- `require(condition, ret_val)` — general condition check
+- `require_not_null_or_empty(ptr, ret_val)` — null or empty string check
+
+Do NOT write bare `if (...) return ...;` for parameter validation. Always use the require macros.
 
 # Implementation Checklist
 
