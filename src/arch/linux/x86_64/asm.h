@@ -4,27 +4,27 @@
 #include "../../../util/log.h"
 #include "../../../util/types.h"
 
-#define SYSCALL_EARLY_RETURN(ret)                    \
-  {                                                   \
-    if (ret < 0) {                                    \
-      if (ret != -EAGAIN && ret != -EINTR) {          \
-        log_debug(__func__);                          \
-        var_debug(":", ret);                           \
-      }                                               \
-      errno = -ret;                                   \
-      return -1;                                      \
-    }                                                 \
+#define SYSCALL_EARLY_RETURN(ret)            \
+  {                                          \
+    if (ret < 0) {                           \
+      if (ret != -EAGAIN && ret != -EINTR) { \
+        log_debug(__func__);                 \
+        var_debug(":", ret);                 \
+      }                                      \
+      errno = -ret;                          \
+      return -1;                             \
+    }                                        \
   }
-#define SYSCALL_SIZE_EARLY_RETURN(ret)                \
-  {                                                   \
-    if (ret < 0) {                                    \
-      if (ret != -EAGAIN && ret != -EINTR) {          \
-        log_debug(__func__);                          \
-        var_debug(":", ret);                           \
-      }                                               \
-      errno = -ret;                                   \
-      return -1;                                      \
-    }                                                 \
+#define SYSCALL_SIZE_EARLY_RETURN(ret)       \
+  {                                          \
+    if (ret < 0) {                           \
+      if (ret != -EAGAIN && ret != -EINTR) { \
+        log_debug(__func__);                 \
+        var_debug(":", ret);                 \
+      }                                      \
+      errno = -ret;                          \
+      return -1;                             \
+    }                                        \
   }
 
 #define linux_x8664_asm_syscall6(                  \
