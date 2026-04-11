@@ -60,8 +60,8 @@ All functions in `src/util/` are prefixed with underscore (`_`) to avoid standar
 
 | Do NOT use | Use instead |
 |---|---|
-| `strlen` | `_sse_strlen` / `_sse_strnlen` (`src/util/string.h`) |
-| `strcmp` | `_sse_strncmp` (`src/util/string.h`) |
+| `strlen` | `_strlen` / `_strnlen` (`src/util/string.h`) |
+| `strcmp` | `_strncmp` (`src/util/string.h`) |
 | `memcpy` | `_memcpy` (`src/util/allocator.h`) |
 | `memset` | `_memset` / `_memset_s` (`src/util/allocator.h`) |
 | `malloc` / `free` | `_alloc` / `_free` (`src/util/allocator.h`) |

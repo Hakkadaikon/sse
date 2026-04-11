@@ -129,7 +129,7 @@ static inline bool _chrcmp(const char a, const char b)
 
 // Custom strncmp: case-insensitive comparison, returns bool
 // Different from standard strncmp which is case-sensitive and returns int
-static inline bool _sse_strncmp(
+static inline bool _strncmp(
   const char*  str1,
   const char*  str2,
   const size_t capacity)
@@ -148,7 +148,7 @@ static inline bool _sse_strncmp(
 }
 
 #if SSE_USE_CUSTOM_STRING_FUNCS
-#define strncmp _sse_strncmp
+#define strncmp _strncmp
 #endif
 
 static inline bool _strncmp_sensitive(
@@ -302,7 +302,7 @@ static inline int32_t _skip_token(const char* buffer, const size_t buffer_size, 
   return -1;
 }
 
-static size_t inline _sse_strlen(const char* str)
+static size_t inline _strlen(const char* str)
 {
   require_not_null(str, 0);
 
@@ -313,7 +313,7 @@ static size_t inline _sse_strlen(const char* str)
   return len - 1;
 }
 
-static size_t inline _sse_strnlen(const char* str, const size_t capacity)
+static size_t inline _strnlen(const char* str, const size_t capacity)
 {
   require_not_null(str, 0);
   require_valid_length(capacity, 0);
@@ -326,8 +326,8 @@ static size_t inline _sse_strnlen(const char* str, const size_t capacity)
 }
 
 #if SSE_USE_CUSTOM_STRING_FUNCS
-#define strlen _sse_strlen
-#define strnlen _sse_strnlen
+#define strlen _strlen
+#define strnlen _strnlen
 #endif
 
 static inline int32_t _calc_digit(int32_t value)

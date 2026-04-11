@@ -88,7 +88,7 @@ Follow the conventions derived from existing code:
 - **Validation**: Use `require_not_null()`, `require_valid_length()`, `require()` macros at function entry. All early returns for parameter validation must use these macros.
 - **Return values**: `bool` for success/failure, `size_t` for sizes (`-1` on failure)
 - **Include guards**: `#ifndef SSE_MODULE_NAME_H_` format
-- **Util function naming**: All functions in `src/util/` are prefixed with underscore (`_`) to avoid standard library name collisions (e.g., `_sse_strlen`, `_itoa`, `_is_space`)
+- **Util function naming**: All functions in `src/util/` are prefixed with underscore (`_`) to avoid standard library name collisions (e.g., `_strlen`, `_itoa`, `_is_space`)
 
 ## Directory Structure Pattern
 
