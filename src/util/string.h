@@ -20,7 +20,7 @@
     return ret_val;                    \
   }
 #define require_not_null_or_empty(ptr, ret_val) \
-  if (_is_null_or_empty(ptr)) {                  \
+  if (_is_null_or_empty(ptr)) {                 \
     return ret_val;                             \
   }
 #define require_valid_length(len, ret_val) \
