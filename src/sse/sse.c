@@ -13,6 +13,7 @@
 #include "../http/http.h"
 #include "../util/allocator.h"
 #include "../util/log.h"
+#include "../util/signal.h"
 #include "../util/string.h"
 
 enum {
@@ -158,6 +159,8 @@ bool sse_server_init(SSEServer* server, const SSEServerConfig* config)
 
   sse_stream_init(&server->stream);
 
+  _signal_init();
+
   return true;
 }
 
@@ -194,10 +197,14 @@ bool sse_server_run(SSEServer* server)
 
   server->running = true;
 
-  while (server->running) {
+  while (server->running && !_is_rise_signal()) {
     SSEEpollEvent events[SSE_EPOLL_MAX_EVENTS];
     int32_t       nfds = internal_epoll_wait(
       server->epoll_fd, events, SSE_EPOLL_MAX_EVENTS, server->config.event_interval_ms);
+
+    if (_is_rise_signal()) {
+      break;
+    }
 
     for (int32_t i = 0; i < nfds; i++) {
       if (events[i].data.fd == server->listen_fd) {
@@ -217,6 +224,7 @@ bool sse_server_run(SSEServer* server)
     }
   }
 
+  sse_server_cleanup(server);
   return true;
 }
 

@@ -3,7 +3,7 @@
 #include "../arch/sigaction.h"
 #include "allocator.h"
 
-static bool rise_signal = false;
+static volatile bool rise_signal = false;
 
 static void _signal_handler(int32_t signum);
 bool        _is_rise_signal();
