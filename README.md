@@ -263,6 +263,53 @@ tests/
 
 This implementation follows the [W3C Server-Sent Events](https://html.spec.whatwg.org/multipage/server-sent-events.html) specification.
 
+### Specification coverage
+
+#### Event stream format
+
+| Feature | Status | Notes |
+|---|---|---|
+| `data:` field | Implemented | `sse_event_serialize()` |
+| Multi-line data splitting | Implemented | Splits on `\n`, emits separate `data:` per line |
+| `event:` field (named events) | Implemented | Omitted when empty (defaults to `message`) |
+| `id:` field (event IDs) | Implemented | Omitted when empty |
+| `retry:` field (reconnection interval) | Implemented | Omitted when `SSE_RETRY_UNSET` (-1) |
+| Comment lines (`:` prefix) | Implemented | `sse_serialize_comment()`, used for keepalive |
+| Blank line event terminator (`\n\n`) | Implemented | Appended after each event |
+
+#### HTTP response
+
+| Feature | Status | Notes |
+|---|---|---|
+| `HTTP/1.1 200 OK` status | Implemented | `sse_build_response_header()` |
+| `Content-Type: text/event-stream` | Implemented | |
+| `Cache-Control: no-cache` | Implemented | |
+| `Connection: keep-alive` | Implemented | |
+| CORS (`Access-Control-Allow-Origin`) | Not implemented | Use a reverse proxy if needed |
+| HTTP chunked transfer encoding | Not implemented | Uses persistent connection with direct sends |
+| HTTP/2 support | Not implemented | HTTP/1.1 only |
+
+#### Reconnection
+
+| Feature | Status | Notes |
+|---|---|---|
+| `Last-Event-ID` header extraction | Implemented | `sse_conn_extract_last_event_id()` |
+| Event replay after reconnect | Implemented | Ring buffer of 128 recent events, `sse_stream_replay_events()` |
+
+#### Connection management
+
+| Feature | Status | Notes |
+|---|---|---|
+| Multiple concurrent clients | Implemented | Up to 64 connections (epoll-based) |
+| Client disconnect detection | Implemented | Via `EPOLLRDHUP` / `EPOLLERR` / `EPOLLHUP` |
+| Graceful server shutdown | Implemented | SIGINT / SIGTERM / SIGHUP signal handling |
+
+#### Encoding
+
+| Feature | Status | Notes |
+|---|---|---|
+| UTF-8 event stream | Assumed | No explicit BOM handling or encoding validation |
+
 ### Event format
 
 ```
